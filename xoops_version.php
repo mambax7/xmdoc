@@ -51,15 +51,17 @@ $modversion['onInstall']        = 'include/install.php';
 $modversion['sqlfile']['mysql'] = 'sql/mysql.sql';
 
 $modversion['tables'][1] = 'xmdoc_category';
-//$modversion['tables'][2] = 'xmdoc_doc';
+$modversion['tables'][2] = 'xmdoc_document';
+$modversion['tables'][3] = 'xmdoc_docdata';
 
 // Admin Templates
 $modversion['templates'][] = array('file' => 'xmdoc_admin_category.tpl', 'description' => '', 'type' => 'admin');
-/*$modversion['templates'][] = array('file' => 'xmdoc_admin_doc.tpl', 'description' => '', 'type' => 'admin');
-$modversion['templates'][] = array('file' => 'xmdoc_admin_permission.tpl', 'description' => '', 'type' => 'admin');*/
+$modversion['templates'][] = array('file' => 'xmdoc_admin_document.tpl', 'description' => '', 'type' => 'admin');
+$modversion['templates'][] = array('file' => 'xmdoc_admin_permission.tpl', 'description' => '', 'type' => 'admin');
 
 // User Templates
-//$modversion['templates'][] = array('file' => 'xmdoc_action.tpl', 'description' => '');
+$modversion['templates'][] = array('file' => 'xmdoc_docmanager.tpl', 'description' => '');
+$modversion['templates'][] = array('file' => 'xmdoc_viewdoc.tpl', 'description' => '');
 
 // Configs
 $modversion['config'] = array();
@@ -92,6 +94,43 @@ $modversion['config'][] = array(
     'valuetype'   => 'text',
     'default'     => 'dhtmltextarea',
     'options'     => array_flip($editorHandler->getList())
+);
+
+$modversion['config'][] = array(
+    'name'        => 'general_captcha',
+    'title'       => '_MI_XMDOC_PREF_CAPTCHA',
+    'description' => '_MI_XMDOC_PREF_CAPTCHA_DESC',
+    'formtype'    => 'yesno',
+    'valuetype'   => 'int',
+    'default'     => 0
+);
+
+$modversion['config'][] = array(
+    'name'        => 'break',
+    'title'       => '_MI_XMDOC_PREF_HEAD_DOWNLOAD',
+    'description' => '',
+    'formtype'    => 'line_break',
+    'valuetype'   => 'text',
+    'default'     => 'head',
+);
+
+$modversion['config'][] = array(
+    'name'        => 'download_checkhost',
+    'title'       => '_MI_XMDOC_PREF_CHECKHOST',
+    'description' => '',
+    'formtype'    => 'yesno',
+    'valuetype'   => 'int',
+    'default'     => 0,
+);
+
+$xoops_url = parse_url(XOOPS_URL);
+$modversion['config'][] = array(
+    'name'        => 'download_host',
+    'title'       => '_MI_XMDOC_PREF_HOST',
+    'description' => '',
+    'formtype'    => 'textarea',
+    'valuetype'   => 'array',
+    'default'     => array($xoops_url['host']),
 );
 
 $modversion['config'][] = array(

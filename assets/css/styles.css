@@ -1,0 +1,36 @@
+.xmdoc {
+}
+.xm-document-logo {
+    max-height: 120px;
+    min-height: 120px;
+    text-align: center;
+    overflow: hidden;
+}
+
+.xm-document-title {
+    font-size: 1.3em;
+    line-height: inherit;
+    margin: 0 0 5px 0;
+    display: block;
+}
+
+.xm-document-description {
+    max-height: 50px;
+    min-height: 50px;
+    overflow: hidden;
+    text-align: justify;
+    margin: 5px 0 5px 0;
+}
+
+.xm-document-view.row {
+    font-weight: bold;
+    color: #999;
+    font-size: 1em;
+}
+
+.xm-document-view {
+    padding-bottom: 5px;
+}
+.xm-document-view-top {
+    padding-top: 25px;
+}

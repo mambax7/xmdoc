@@ -50,7 +50,9 @@ switch ($op) {
                 $category_id                 = $category_arr[$i]->getVar('category_id');
                 $category['id']              = $category_id;
                 $category['name']            = $category_arr[$i]->getVar('category_name');
-                $category['description']     = $category_arr[$i]->getVar('category_description', 'show');
+                $category['description']     = \Xmf\Metagen::generateDescription($category_arr[$i]->getVar('category_description', 'show'), 30);
+                $category['extensions']      = implode(', ', $category_arr[$i]->getVar('category_extensions'));
+                $category['size']            = XmdocUtility::FileSizeConvert($category_arr[$i]->getVar('category_size')*1024);
                 $category['weight']          = $category_arr[$i]->getVar('category_weight');
                 $category['status']          = $category_arr[$i]->getVar('category_status');
                 $category_img                = $category_arr[$i]->getVar('category_logo') ?: 'blank.gif';
@@ -130,17 +132,32 @@ switch ($op) {
                 if ($categoryHandler->delete($obj)) {
                     //Del logo
                     if ($obj->getVar('category_logo') != 'blank.gif') {
-                        $urlfile = $path_logo_category . $obj->getVar('category_logo');
-                        if (is_file($urlfile)) {
-                            chmod($urlfile, 0777);
-                            unlink($urlfile);
+                        // Test if the image is used
+                        $criteria = new CriteriaCompo();
+                        $criteria->add(new Criteria('category_logo', $obj->getVar('category_logo')));
+                        $category_count = $categoryHandler->getCount($criteria);
+                        if ($category_count == 0){
+                            $urlfile = $path_logo_category . $obj->getVar('category_logo');
+                            if (is_file($urlfile)) {
+                                chmod($urlfile, 0777);
+                                unlink($urlfile);
+                            }
                         }
                     }
                     // Del permissions
-                    /*$permHelper = new \Xmf\Module\Helper\Permission();
+                    $permHelper = new \Xmf\Module\Helper\Permission();
                     $permHelper->deletePermissionForItem('xmdoc_view', $category_id);
-                    $permHelper->deletePermissionForItem('xmdoc_submit', $category_id);*/
-
+                    $permHelper->deletePermissionForItem('xmdoc_submit', $category_id);
+                    
+                    // Del document
+                    $criteria = new CriteriaCompo();
+                    $criteria->add(new Criteria('document_category', $category_id));
+                    $document_count = $documentHandler->getCount($criteria);
+                    if ($document_count > 0){
+                        $documentHandler->deleteAll($criteria);
+                    }
+                    // del directory
+                    XmdocUtility::delDirectory($path_document . $obj->getVar('category_folder') . '/');
                     redirect_header('category.php', 2, _MA_XMDOC_REDIRECT_SAVE);
                 } else {
                     $xoopsTpl->assign('error_message', $obj->getHtmlErrors());
@@ -150,7 +167,7 @@ switch ($op) {
                 xoops_confirm(array('surdel' => true, 'category_id' => $category_id, 'op' => 'del'), $_SERVER['REQUEST_URI'], 
                                     sprintf(_MA_XMDOC_CATEGORY_SUREDEL, $obj->getVar('category_name')) . '<br>
                                     <img src="' . $url_logo_category . $category_img . '" title="' . 
-                                    $obj->getVar('category_name') . '" /><br>');
+                                    $obj->getVar('category_name') . '" /><br>' . XmdocUtility::documentNamePerCat($category_id));
             }
         }
         
