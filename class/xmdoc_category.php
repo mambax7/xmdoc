@@ -63,23 +63,23 @@ class xmdoc_category extends XoopsObject
      */
     public function saveCategory($categoryHandler, $action = false)
     {
-        if ($action === false) {
+        if (false === $action) {
             $action = $_SERVER['REQUEST_URI'];
         }
         include __DIR__ . '/../include/common.php';
         
         $error_message = '';
         // test error
-        if ((int)$_REQUEST['category_weight'] == 0 && $_REQUEST['category_weight'] != '0') {
+        if (0 == (int)$_REQUEST['category_weight'] && '0' != $_REQUEST['category_weight']) {
             $error_message .= _MA_XMDOC_ERROR_WEIGHT . '<br>';
             $this->setVar('category_weight', 0);
         }
-        if ((int)$_REQUEST['category_size'] == 0 && $_REQUEST['category_size'] != '0') {
+        if (0 == (int)$_REQUEST['category_size'] && '0' != $_REQUEST['category_size']) {
             $error_message .= _MA_XMDOC_ERROR_SIZE . '<br>';
             $this->setVar('category_size', 0);
         }
         //logo
-        if ($_FILES['category_logo']['error'] != UPLOAD_ERR_NO_FILE) {
+        if (UPLOAD_ERR_NO_FILE != $_FILES['category_logo']['error']) {
             include_once XOOPS_ROOT_PATH . '/class/uploader.php';
             $uploader_category_img = new XoopsMediaUploader($path_logo_category, array('image/gif', 'image/jpeg', 'image/pjpeg', 'image/x-png', 'image/png'), $upload_size, null, null);
             if ($uploader_category_img->fetchMedia('category_logo')) {
@@ -100,19 +100,19 @@ class xmdoc_category extends XoopsObject
         $this->setVar('category_extensions', Xmf\Request::getArray('category_extensions', array()));
         $this->setVar('category_rename', Xmf\Request::getInt('category_rename', 0));
         $this->setVar('category_status', Xmf\Request::getInt('category_status', 1));
-        if ($this->getVar('category_folder') == '') {
+        if ('' == $this->getVar('category_folder')) {
             $folder = XmdocUtility::creatFolder($path_document);
             $this->setVar('category_folder', $folder);
         }
         $this->setVar('category_limitdownload', Xmf\Request::getInt('category_limitdownload', 1));
         $this->setVar('category_limititem', Xmf\Request::getInt('category_limititem', 1));
 
-        if ($error_message == '') {
+        if ('' == $error_message) {
             $this->setVar('category_weight', Xmf\Request::getInt('category_weight', 0));
             $this->setVar('category_size', Xmf\Request::getInt('category_size', 0));
             if ($categoryHandler->insert($this)) {
                 // permissions
-                if ($this->get_new_enreg() == 0){
+                if (0 == $this->get_new_enreg()){
 					$perm_id = $this->getVar('category_id');
 				} else {
 					$perm_id = $this->get_new_enreg();
@@ -140,7 +140,7 @@ class xmdoc_category extends XoopsObject
     {
         $upload_size = 512000;
         $helper = \Xmf\Module\Helper::getHelper('xmdoc');
-        if ($action === false) {
+        if (false === $action) {
             $action = $_SERVER['REQUEST_URI'];
         }
         include_once XOOPS_ROOT_PATH . '/class/xoopsformloader.php';

@@ -67,7 +67,7 @@ class xmdoc_document extends XoopsObject
     public function saveDocument($documentHandler, $action = false)
     {
         global $xoopsUser;        
-        if ($action === false) {
+        if (false === $action) {
             $action = $_SERVER['REQUEST_URI'];
         }
         include __DIR__ . '/../include/common.php';
@@ -75,7 +75,7 @@ class xmdoc_document extends XoopsObject
         $error_message = '';
         $upload_size = 512000;
         // test error
-        if ((int)$_REQUEST['document_weight'] == 0 && $_REQUEST['document_weight'] != '0') {
+        if (0 == (int)$_REQUEST['document_weight'] && '0' != $_REQUEST['document_weight']) {
             $error_message .= _MA_XMDOC_ERROR_WEIGHT . '<br>';
             $this->setVar('document_weight', 0);
         }
@@ -84,11 +84,11 @@ class xmdoc_document extends XoopsObject
         $category_id = Xmf\Request::getInt('document_category', 1);
         $category = $categoryHandler->get($category_id);
         $folder = $category->getVar('category_folder');
-        if ($_FILES['document_document']['error'] != UPLOAD_ERR_NO_FILE) {
+        if (UPLOAD_ERR_NO_FILE != $_FILES['document_document']['error']) {
             include_once XOOPS_ROOT_PATH . '/class/uploader.php';
             $uploader_document_img = new XoopsMediaUploader($path_document . $folder .'/', XmdocUtility::ExtensionToMime($category->getVar('category_extensions')), $category->getVar('category_size') * 1024, null, null);
             if ($uploader_document_img->fetchMedia('document_document')) {
-				if ($category->getVar('category_rename') === true){
+				if (true === $category->getVar('category_rename')){
 					$uploader_document_img->setPrefix('document_');
 				}                
                 if (!$uploader_document_img->upload()) {
@@ -104,7 +104,7 @@ class xmdoc_document extends XoopsObject
         }
 
         //logo
-        if ($_FILES['document_logo']['error'] != UPLOAD_ERR_NO_FILE) {
+        if (UPLOAD_ERR_NO_FILE != $_FILES['document_logo']['error']) {
             include_once XOOPS_ROOT_PATH . '/class/uploader.php';
             $uploader_document_img = new XoopsMediaUploader($path_logo_document, array('image/gif', 'image/jpeg', 'image/pjpeg', 'image/x-png', 'image/png'), $upload_size, null, null);
             if ($uploader_document_img->fetchMedia('document_logo')) {
@@ -132,7 +132,7 @@ class xmdoc_document extends XoopsObject
             $this->setVar('document_userid', !empty($xoopsUser) ? $xoopsUser->getVar('uid') : 0);
         }
 		if (isset($_POST['document_date'])) {
-			if ($_POST['date_update'] == 'Y'){
+			if ('Y' == $_POST['date_update']){
 				$this->setVar('document_date', strtotime(Xmf\Request::getString('document_date', '')));
 			}
 			$this->setVar('document_mdate', time());
@@ -140,15 +140,15 @@ class xmdoc_document extends XoopsObject
 			$this->setVar('document_date', time());
         }
 		if (isset($_POST['document_mdate'])) {
-			if ($_POST['mdate_update'] == 'Y'){
+			if ('Y' == $_POST['mdate_update']){
 				$this->setVar('document_mdate', strtotime(Xmf\Request::getString('document_mdate', '')));
 			}
-			if ($_POST['mdate_update'] == 'R'){
+			if ('R' == $_POST['mdate_update']){
 				$this->setVar('document_mdate', 0);
 			}
         }
 		// Captcha
-        if ($xoopsModuleConfig['general_captcha'] == 1) {
+        if (1 == $xoopsModuleConfig['general_captcha']) {
             xoops_load('xoopscaptcha');
             $xoopsCaptcha = XoopsCaptcha::getInstance();
             if (! $xoopsCaptcha->verify() ) {
@@ -156,7 +156,7 @@ class xmdoc_document extends XoopsObject
             }
         }
 
-        if ($error_message == '') {
+        if ('' == $error_message) {
             $this->setVar('document_weight', Xmf\Request::getInt('document_weight', 0));
             if ($documentHandler->insert($this)) {
                 redirect_header($action, 2, _MA_XMDOC_REDIRECT_SAVE);
@@ -173,7 +173,7 @@ class xmdoc_document extends XoopsObject
      */
     public function getFormCategory($action = false)
     {
-        if ($action === false) {
+        if (false === $action) {
             $action = $_SERVER['REQUEST_URI'];
         }
         include_once XOOPS_ROOT_PATH . '/class/xoopsformloader.php';
@@ -193,7 +193,7 @@ class xmdoc_document extends XoopsObject
             $criteria->add(new Criteria('category_id', '(' . implode(',', $submitPermissionCat) . ')','IN'));
         }
         $category_arr = $categoryHandler->getall($criteria);        
-        if (count($category_arr) == 0 || empty($submitPermissionCat)){
+        if (0 == count($category_arr) || empty($submitPermissionCat)){
             redirect_header('index.php', 3, _MA_XMDOC_ERROR_NOACESSCATEGORY);
         }
         foreach (array_keys($category_arr) as $i) {
@@ -216,7 +216,7 @@ class xmdoc_document extends XoopsObject
         global $xoopsUser;
         $upload_size = 512000;
         $helper = \Xmf\Module\Helper::getHelper('xmdoc');
-        if ($action === false) {
+        if (false === $action) {
             $action = $_SERVER['REQUEST_URI'];
         }
         include_once XOOPS_ROOT_PATH . '/class/xoopsformloader.php';
@@ -296,7 +296,7 @@ class xmdoc_document extends XoopsObject
         // weight
         $form->addElement(new XoopsFormText(_MA_XMDOC_DOCUMENT_WEIGHT, 'document_weight', 5, 5, $weight), true);
         
-        if ($helper->isUserAdmin() === true){
+        if (true === $helper->isUserAdmin()){
 			if ($this->isNew()) {
 				$userid = !empty($xoopsUser) ? $xoopsUser->getVar('uid') : 0;
 			} else {
@@ -314,7 +314,7 @@ class xmdoc_document extends XoopsObject
 				$selection_date->addElement($date);
 				$selection_date->addElement(new XoopsFormTextDateSelect('', 'document_date', '', time()));
 				$form->addElement($selection_date);
-				if ($this->getVar('document_mdate') != 0){
+				if (0 != $this->getVar('document_mdate')){
 					$selection_mdate = new XoopsFormElementTray(_MA_XMDOC_DOCUMENT_MDATEUPDATE);
 					$mdate = new XoopsFormRadio('', 'mdate_update', 'N');
 					$options = array('N' =>_NO . ' (' . formatTimestamp($this->getVar('document_mdate'),'s') . ')', 'R' => _MA_XMDOC_DOCUMENT_RESETMDATE, 'Y' => _YES);
@@ -333,7 +333,7 @@ class xmdoc_document extends XoopsObject
         $form->addElement($form_status);
 		
 		//captcha		
-		if ($helper->getConfig('general_captcha', 0) == 1) {
+		if (1 == $helper->getConfig('general_captcha', 0)) {
 			$form->addElement(new XoopsFormCaptcha(), true);
 		}
 

@@ -42,7 +42,7 @@ if (isset($_REQUEST['selectreset'])){
 		
 if (isset($_REQUEST['selDocs'])){			
 	if (isset($_REQUEST['selDocs']) && is_array($_REQUEST['selDocs'])) {
-        if ($sessionHelper->get('selectiondocs') != false){
+        if (false != $sessionHelper->get('selectiondocs')){
             $arr_selectiondocs = $sessionHelper->get('selectiondocs');
         } else {
             $arr_selectiondocs = array();
@@ -55,7 +55,7 @@ if (isset($_REQUEST['selDocs'])){
         $sessionHelper->set('selectiondocs', $arr_selectiondocs);
 	}
 }
-if ($sessionHelper->get('selectiondocs') != False){
+if (False != $sessionHelper->get('selectiondocs')){
 	$xoopsTpl->assign('selected', true);
 	
 	$criteria = new CriteriaCompo();
@@ -89,7 +89,7 @@ if ($sessionHelper->get('selectiondocs') != False){
 	$reset = '';
 }
 
-if ($reset == ''){
+if ('' == $reset){
 	$s_name = Request::getString('s_name', '');
 	$s_cat = Request::getInt('s_cat', 0);
 } else {
@@ -116,7 +116,7 @@ if (!empty($viewPermissionCat)){
 	$criteria->add(new Criteria('category_id', '(' . implode(',', $viewPermissionCat) . ')','IN'));
 }
 $category_arr = $categoryHandler->getall($criteria);        
-if (count($category_arr) == 0 || empty($viewPermissionCat)){
+if (0 == count($category_arr) || empty($viewPermissionCat)){
 	redirect_header(XOOPS_URL, 3, _MA_XMDOC_ERROR_NOACESSCATEGORY);
 }
 $category->addOption(0, _ALL);
@@ -133,15 +133,15 @@ $form->addElement($button);
 
 $xoopsTpl->assign('form', $form->render());
 
-if ($search != ''){
+if ('' != $search){
 	$arguments = 's_cat=' . $s_cat . '&amp;';
 	$criteria = new CriteriaCompo();
 	$criteria->add(new Criteria('document_status', 1));
-	if ($s_name != '') {
+	if ('' != $s_name) {
 		$criteria->add(new Criteria('document_name', '%' . $s_name . '%', 'LIKE'));
 		$arguments .= 's_name=' . $s_name . '&amp;';
 	}
-	if ($s_cat != 0){
+	if (0 != $s_cat){
 		$criteria->add(new Criteria('document_category', $s_cat));
 	}
 	if (!empty($viewPermissionCat)){

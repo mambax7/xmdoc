@@ -113,7 +113,7 @@ class XmdocUtility
 		// module id
 		$helper = \Xmf\Module\Helper::getHelper($modulename);
 		$moduleid = $helper->getModule()->getVar('mid');
-		if ($sessionHelper->get('selectiondocs') != false){
+		if (false != $sessionHelper->get('selectiondocs')){
 			foreach ($sessionHelper->get('selectiondocs') as $index) {				
 				// vérification pour savoir si le document est déjà existant
 				$criteria = new CriteriaCompo();
@@ -121,7 +121,7 @@ class XmdocUtility
 				$criteria->add(new Criteria('docdata_modid', $moduleid));
 				$criteria->add(new Criteria('docdata_itemid', $itemid));
 				$docdata_count = $docdataHandler->getCount($criteria);
-				if ($docdata_count == 0) {
+				if (0 == $docdata_count) {
 					$obj  = $docdataHandler->create();
 					$obj->setVar('docdata_docid', $index);
 					$obj->setVar('docdata_modid', $moduleid);
@@ -183,7 +183,7 @@ class XmdocUtility
                 $document['description_short'] = \Xmf\Metagen::generateDescription($document_arr[$i]->getVar('document_description', 'show'), 10);
                 $document['author']            = XoopsUser::getUnameFromId($document_arr[$i]->getVar('document_userid'));
                 $document['date']              = formatTimestamp($document_arr[$i]->getVar('document_date'), 's');
-                if ($document_arr[$i]->getVar('document_mdate') != 0) {
+                if (0 != $document_arr[$i]->getVar('document_mdate')) {
                     $document['mdate']         = formatTimestamp($document_arr[$i]->getVar('document_mdate'), 's');
                 }                
                 $document['rating']            = number_format($document_arr[$i]->getVar('document_rating'), 1);
@@ -223,8 +223,8 @@ class XmdocUtility
     {
         if (is_dir($dir)) {
             if ($dirHandle = opendir($dir)) {
-                while (($file = readdir($dirHandle)) !== false) {
-                    if (filetype($dir . $file) === 'file') {
+                while (false !== ($file = readdir($dirHandle))) {
+                    if ('file' === filetype($dir . $file)) {
                         unlink($dir . $file);
                     }
                 }

@@ -47,7 +47,7 @@ switch ($op) {
 		$criteria->setOrder('ASC');
 		$category_arr = $categoryHandler->getall($criteria);		
 		if (count($category_arr) > 0) {
-			$category_options = '<option value="0"' . ($category == 0 ? ' selected="selected"' : '') . '>' . _ALL .'</option>';
+			$category_options = '<option value="0"' . (0 == $category ? ' selected="selected"' : '') . '>' . _ALL . '</option>';
 			foreach (array_keys($category_arr) as $i) {
 				$category_options .= '<option value="' . $i . '"' . ($category == $i ? ' selected="selected"' : '') . '>' . $category_arr[$i]->getVar('category_name') . '</option>';
 			}
@@ -57,7 +57,7 @@ switch ($op) {
         $status = Request::getInt('status', 10);
         $xoopsTpl->assign('status', $status);
         $status_options_arr = array(1 => _MA_XMDOC_STATUS_A, 0 =>_MA_XMDOC_STATUS_NA);
-		$status_options = '<option value="10"' . ($status == 0 ? ' selected="selected"' : '') . '>' . _ALL .'</option>';
+		$status_options = '<option value="10"' . (0 == $status ? ' selected="selected"' : '') . '>' . _ALL . '</option>';
         foreach (array_keys($status_options_arr) as $i) {
             $status_options .= '<option value="' . $i . '"' . ($status == $i ? ' selected="selected"' : '') . '>' . $status_options_arr[$i] . '</option>';
         }
@@ -69,10 +69,10 @@ switch ($op) {
         $criteria->setOrder('ASC');
         $criteria->setStart($start);
         $criteria->setLimit($nb_limit);
-        if ($category != 0){
+        if (0 != $category){
 			$criteria->add(new Criteria('document_category', $category));
 		}
-        if ($status != 10){
+        if (10 != $status){
 			$criteria->add(new Criteria('document_status', $status));
 		}
         $documentHandler->table_link = $documentHandler->db->prefix("xmdoc_category");
@@ -134,7 +134,7 @@ switch ($op) {
         $moduleAdmin->addItemButton(_MA_XMDOC_DOCUMENT_LIST, 'document.php', 'list');
         $xoopsTpl->assign('renderbutton', $moduleAdmin->renderButton());  
         $document_category = Request::getInt('document_category', 0);
-        if ($document_category == 0) {
+        if (0 == $document_category) {
             $xoopsTpl->assign('error_message', _MA_XMDOC_ERROR_NOCATEGORY);
         } else {
             $category = $categoryHandler->get($document_category);
@@ -154,7 +154,7 @@ switch ($op) {
         $xoopsTpl->assign('renderbutton', $moduleAdmin->renderButton());        
         // Form
         $document_id = Request::getInt('document_id', 0);
-        if ($document_id == 0) {
+        if (0 == $document_id) {
             $xoopsTpl->assign('error_message', _MA_XMDOC_ERROR_NODOCUMENT);
         } else {
             $obj = $documentHandler->get($document_id);
@@ -169,13 +169,13 @@ switch ($op) {
             redirect_header('document.php', 3, implode('<br />', $GLOBALS['xoopsSecurity']->getErrors()));
         }
         $document_id = Request::getInt('document_id', 0);
-        if ($document_id == 0) {
+        if (0 == $document_id) {
             $obj = $documentHandler->create();            
         } else {
             $obj = $documentHandler->get($document_id);
         }
         $error_message = $obj->saveDocument($documentHandler, 'document.php');
-        if ($error_message != ''){
+        if ('' != $error_message){
             $xoopsTpl->assign('error_message', $error_message);
             $form = $obj->getForm();
             $xoopsTpl->assign('form', $form->render());
@@ -186,23 +186,23 @@ switch ($op) {
     // del
     case 'del':    
         $document_id = Request::getInt('document_id', 0);
-        if ($document_id == 0) {
+        if (0 == $document_id) {
             $xoopsTpl->assign('error_message', _MA_XMDOC_ERROR_NODOCUMENT);
         } else {
             $surdel = Request::getBool('surdel', false);
             $obj  = $documentHandler->get($document_id);
-            if ($surdel === true) {
+            if (true === $surdel) {
                 if (!$GLOBALS['xoopsSecurity']->check()) {
                     redirect_header('document.php', 3, implode('<br />', $GLOBALS['xoopsSecurity']->getErrors()));
                 }
                 if ($documentHandler->delete($obj)) {
                     //Del logo
-                    if ($obj->getVar('document_logo') != 'blank_doc.gif') {
+                    if ('blank_doc.gif' != $obj->getVar('document_logo')) {
                         // Test if the image is used
                         $criteria = new CriteriaCompo();
                         $criteria->add(new Criteria('document_logo', $obj->getVar('document_logo')));
                         $document_count = $documentHandler->getCount($criteria);
-                        if ($document_count == 0){
+                        if (0 == $document_count){
                             $urlfile = $path_logo_document . $obj->getVar('document_logo');
                             if (is_file($urlfile)) {
                                 chmod($urlfile, 0777);
